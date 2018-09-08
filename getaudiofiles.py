@@ -6,6 +6,7 @@ import time
 import datetime
 import glob
 import urllib2
+import urllib
 import json
 import sys
 import re
@@ -16,8 +17,10 @@ import os
 
 
 def download_audiofile_fromURL(mediaURL):
-
+	print mediaURL
+	urllib.urlretrieve(mediaURL, "./" + 'xuzhiyuan' + '.mp3')
 	return
+
 #https://res.wx.qq.com/voice/getvoice?mediaid=MzA5MDE3MTE1NF8yMjQ3NDg0NzEy
 def get_audiofile(itemURL):
 	pre_url = 'https://res.wx.qq.com/voice/getvoice?mediaid='
