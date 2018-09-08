@@ -70,6 +70,22 @@ def test4():
 		entry = match.groups()
 		print entry[0], entry[2]
 
+def test5():
+	pagehtml = '<p><mpvoice frameborder="0" class="res_iframe js_editor_audio audio_iframe" src="/cgi-bin/readtemplate?t=tmpl/audio_tmpl&amp;name=%E6%98%A5%E4%B9%8B%E7%A5%AD%2B%E6%97%A5%E7%93%A6%E6%88%88%E5%8C%BB%E7%94%9F&amp;play_length=21:43" isaac2="1" low_size="2587.44" source_size="2560" high_size="10184.53" name="春之祭+日瓦戈医生" play_length="1303000" voice_encode_fileid="MzA5MDE3MTE1NF8yMjQ3NDkwMjMw"></mpvoice><img class="" data-ratio="0.0195035" data-src="https://mmbiz.qpic.cn/mmbiz_png/1LHuo25LFR94Bf8ibRJNoMEhIJb85CoOoH8y20Vz6y4tmO30ZLqSZ62whYTZibJGStdCT1nQRNbvEicONNxlvetjQ/640?wx_fmt=png" data-type="png" data-w="564" width="100%" style="line-height: 1.6; box-sizing: border-box; background-color: rgb(21, 20, 20); width: 556px !important; height: 10.8439px !important;" _width="556px" src="data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg=="></p>'
+	tr_re = re.compile(r'<p>(.*?)</p>')
+	match = tr_re.match(pagehtml)
+	print match
+	return
+	item_re = re.compile(
+		r'<a href="(.*?)">(.*?)</a>',
+		re.X)
+	for line in tr_re.findall(pagehtml):
+		print line + '\n'
+		match = item_re.match(line)
+		if match:
+			entry = match.groups()
+			print entry
+
 if __name__=="__main__":
 	print "start..."
 #	test4()
@@ -81,4 +97,5 @@ if __name__=="__main__":
 #	info_dict.update({fund_info_list[4]: 5})
 	#gen_fund_insert_command("10000", info_dict)
 #	test2()
+	test5()
 	sys.exit(0)
