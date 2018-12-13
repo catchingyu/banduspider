@@ -16,13 +16,16 @@ import threading
 import os
 
 
-def download_audiofile_fromURL(mediaURL):
-	print mediaURL
-	urllib.urlretrieve(mediaURL, "./" + 'xuzhiyuan' + '.mp3')
+def download_audiofile_fromURL(mediaURL, filename):
+	print mediaURL + filename
+	try:
+		urllib.urlretrieve(mediaURL, "./" + filename + '.mp3')
+	except StandardError, e:
+		print e
 	return
 
 #https://res.wx.qq.com/voice/getvoice?mediaid=MzA5MDE3MTE1NF8yMjQ3NDg0NzEy
-def get_audiofile(itemURL):
+def get_audiofile(itemURL, filename):
 	pre_url = 'https://res.wx.qq.com/voice/getvoice?mediaid='
 	try:
 		print 'Downloading itemURL'+ itemURL + '\n'
@@ -48,7 +51,8 @@ def get_audiofile(itemURL):
 		if match:
 			entry = match.groups()
 			print entry[0]
-			download_audiofile_fromURL(pre_url + entry[0])
+			download_audiofile_fromURL(pre_url + entry[0], filename)
+			#break
 	return
 
 #get pageinfo and return the name and URL
@@ -60,12 +64,16 @@ def process_pageinfo(pagehtml):
 	item_re = re.compile(
 		r'<a href="(.*?)"  target(.*?)>(.*?)</a>',
 		re.I)
+	downloadlist = {}
 	for line in tr_re.findall(pagehtml):
 		#print line + '\n'
 		match = item_re.match(line)
 		if match:
 			entry = match.groups()
-			print entry[0], entry[2]
+			#print entry[0], entry[2]
+			downloadlist[entry[0]]=entry[2]
+	#print downloadlist
+	return downloadlist
 
 def get_audiolistURL(albumURL):
 	try:
@@ -81,14 +89,30 @@ def get_audiolistURL(albumURL):
 	#print json_page_value
 	return json_page_value
 
-
+def strip_prefix(downloadlist):
+	print downloadlist
+	strip_downloadlist = {}
+	for (k,v) in downloadlist.items():
+		#print k
+		strip_k = k[len("http://www.bandubb.com/wp-content/themes/begin/inc/go.php?url="):]
+		#print strip_k
+		strip_downloadlist[strip_k] = v
+	return strip_downloadlist
+		#print strip_downloadlist
 
 def main(argv):
-#	html = get_audiolistURL("http://www.bandubb.com/dandu/27732.html")
+	html = get_audiolistURL("http://www.bandubb.com/dandu/27732.html")
+	#print html
 #	itemURL = 'http://www.bandubb.com/wp-content/themes/begin/inc/go.php?url=http://mp.weixin.qq.com/s?__biz=MzA5MDE3MTE1NA==&amp;mid=2247490232&amp;idx=6&amp;sn=7f64064a05329d6d1dd600f20426e444&amp;chksm=900ee8c5a77961d38f5da85543fc4913c49471e047013bffd00184bccf7ae43e61c70c4a31b0&amp;scene=21#wechat_redirect'
-	itemURL = 'http://mp.weixin.qq.com/s?__biz=MzA5MDE3MTE1NA==&amp;mid=2247490232&amp;idx=6&amp;sn=7f64064a05329d6d1dd600f20426e444&amp;chksm=900ee8c5a77961d38f5da85543fc4913c49471e047013bffd00184bccf7ae43e61c70c4a31b0&amp;scene=21'
-#	process_pageinfo(html)
-	get_audiofile(itemURL)
+#	itemURL = 'http://mp.weixin.qq.com/s?__biz=MzA5MDE3MTE1NA==&amp;mid=2247490232&amp;idx=6&amp;sn=7f64064a05329d6d1dd600f20426e444&amp;chksm=900ee8c5a77961d38f5da85543fc4913c49471e047013bffd00184bccf7ae43e61c70c4a31b0&amp;scene=21'
+	downloadlist = process_pageinfo(html)
+
+	downloadlist = strip_prefix(downloadlist)
+	print "downloadlist size " + str(len(downloadlist))
+	for (k,v) in downloadlist.items():
+		get_audiofile(k,v)
+
+#	get_audiofile(itemURL)
 	sys.exit(0)
 
 if __name__ == "__main__":
